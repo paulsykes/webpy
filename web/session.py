@@ -3,7 +3,7 @@ Session Management
 (from web.py)
 """
 
-import os, time, datetime, random, base64
+import os, time, datetime, random, codecs
 import os.path
 from copy import deepcopy
 try:
@@ -201,13 +201,11 @@ class Store:
 
     def encode(self, session_dict):
         """encodes session dict as a string"""
-        pickled = pickle.dumps(session_dict)
-        return base64.encodestring(pickled)
+        return codecs.encode(pickle.dumps(session_dict), "base64").decode()
 
     def decode(self, session_data):
         """decodes the data to get back the session dict """
-        pickled = base64.decodestring(session_data)
-        return pickle.loads(pickled)
+        return pickle.loads(codecs.decode(session_data.encode(), "base64"))
 
 class DiskStore(Store):
     """
