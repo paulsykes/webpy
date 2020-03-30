@@ -8,6 +8,7 @@ import os
 import os.path
 import threading
 import time
+import codecs
 from copy import deepcopy
 from hashlib import sha1
 
@@ -21,7 +22,6 @@ except ImportError:
     import pickle
 
 
-from base64 import encodebytes, decodebytes
 
 
 __all__ = ["Session", "SessionExpired", "Store", "DiskStore", "DBStore"]
@@ -233,13 +233,11 @@ class Store:
 
     def encode(self, session_dict):
         """encodes session dict as a string"""
-        pickled = pickle.dumps(session_dict)
-        return encodebytes(pickled)
+        return codecs.encode(pickle.dumps(session_dict), "base64").decode()
 
     def decode(self, session_data):
         """decodes the data to get back the session dict """
-        pickled = decodebytes(session_data)
-        return pickle.loads(pickled)
+        return pickle.loads(codecs.decode(session_data.encode(), "base64"))
 
 
 class DiskStore(Store):
